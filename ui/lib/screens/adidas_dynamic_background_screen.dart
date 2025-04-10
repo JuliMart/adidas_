@@ -5,22 +5,23 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class AdidasWelcomeScreen extends StatefulWidget {
-  const AdidasWelcomeScreen({super.key});
+class AdidasDynamicBackgroundScreen extends StatefulWidget {
+  const AdidasDynamicBackgroundScreen({super.key});
 
   @override
-  State<AdidasWelcomeScreen> createState() => _AdidasWelcomeScreenState();
+  State<AdidasDynamicBackgroundScreen> createState() => _AdidasDynamicBackgroundScreenState();
 }
 
-class _AdidasWelcomeScreenState extends State<AdidasWelcomeScreen> {
+class _AdidasDynamicBackgroundScreenState extends State<AdidasDynamicBackgroundScreen> {
   html.VideoElement? videoElement;
   html.CanvasElement? canvasElement;
   Timer? snapshotTimer;
-  String? detectedAge;
   String? clothingColor;
   String? gesture;
-  bool colorLocked = false;
-  String? fixedColor;
+  bool backgroundLocked = false;
+  Color fixedColor = Colors.black;
+  bool isProcessing = false;
+  bool gestureHandled = false;
 
   @override
   void initState() {
@@ -43,8 +44,10 @@ class _AdidasWelcomeScreenState extends State<AdidasWelcomeScreen> {
   }
 
   void _startProcessing() {
-    snapshotTimer = Timer.periodic(Duration(milliseconds: 50), (_) async {
-      if (videoElement == null || canvasElement == null) return;
+    snapshotTimer = Timer.periodic(Duration(milliseconds: 300), (_) async {
+      if (videoElement == null || canvasElement == null || isProcessing) return;
+
+      isProcessing = true;
 
       final ctx = canvasElement!.context2D;
       ctx.drawImage(videoElement!, 0, 0);
@@ -56,11 +59,13 @@ class _AdidasWelcomeScreenState extends State<AdidasWelcomeScreen> {
       final imageBytes = reader.result as Uint8List;
 
       await _sendToServer(imageBytes);
+
+      isProcessing = false;
     });
   }
 
   Future<void> _sendToServer(Uint8List imageBytes) async {
-    final uri = Uri.parse('http://localhost:8000/analyze');
+    final uri = Uri.parse('http://localhost:8000/analyze?full_frame=true');
     final request = http.MultipartRequest('POST', uri)
       ..files.add(
         http.MultipartFile.fromBytes(
@@ -73,17 +78,14 @@ class _AdidasWelcomeScreenState extends State<AdidasWelcomeScreen> {
     final response = await request.send();
     if (response.statusCode == 200) {
       final data = jsonDecode(await response.stream.bytesToString());
-      setState(() {
-        detectedAge = data['age_range'];
-        gesture = data['gesture'];
-        if (!colorLocked) {
-          clothingColor = data['color'];
-        }
-      });
+      final detectedGesture = data['gesture'];
 
-      if (gesture == 'sign_continue') {
-        Navigator.pushNamed(context, '/menu');
-      }
+      setState(() {
+        clothingColor = data['color'];
+
+        // solo gestiona thumbs_up y thumbs_down aquí
+         
+      });
     }
   }
 
@@ -95,52 +97,48 @@ class _AdidasWelcomeScreenState extends State<AdidasWelcomeScreen> {
     super.dispose();
   }
 
-  Color _getAdaptiveLogoColor() {
-    final hex = colorLocked ? fixedColor : clothingColor;
-    if (hex != null && hex.startsWith("#")) {
+  Color _getBackgroundColor() {
+    if (clothingColor != null && clothingColor!.startsWith("#")) {
       try {
-        return Color(int.parse(hex.substring(1), radix: 16) + 0xFF000000);
+        return Color(int.parse(clothingColor!.substring(1), radix: 16) + 0xFF000000);
       } catch (_) {
-        return Colors.white;
+        return Colors.black;
       }
     }
-    return Colors.white;
-  }
-
-  void _toggleColorLock() {
-    setState(() {
-      if (colorLocked) {
-        colorLocked = false;
-        fixedColor = null;
-      } else {
-        colorLocked = true;
-        fixedColor = clothingColor;
-      }
-    });
+    return Colors.black;
   }
 
   @override
   Widget build(BuildContext context) {
-    final logoColor = _getAdaptiveLogoColor();
+    final backgroundColor = backgroundLocked ? fixedColor : _getBackgroundColor();
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: backgroundColor,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             AnimatedScale(
-              scale: colorLocked ? 1.1 : 1.0,
-              duration: const Duration(milliseconds: 200),
-              child: GestureDetector(
-                onTap: _toggleColorLock,
-                child: ColorFiltered(
-                  colorFilter: ColorFilter.mode(logoColor, BlendMode.srcIn),
-                  child: Image.asset('assets/originals.png', height: 300),
+            scale: backgroundLocked ? 1.1 : 1.0,
+            duration: const Duration(milliseconds: 200),
+            child: GestureDetector(
+                onTap: () {
+                setState(() {
+                    backgroundLocked = !backgroundLocked;
+                    if (backgroundLocked) {
+                    fixedColor = _getBackgroundColor();
+                    }
+                });
+                },
+                child: Image.asset(
+                'assets/originals.png',
+                height: 300,
+                color: Colors.white,
                 ),
-              ),
             ),
-            const SizedBox(height: 40),
+            ),
+
+            const SizedBox(height: 20),
           ],
         ),
       ),
