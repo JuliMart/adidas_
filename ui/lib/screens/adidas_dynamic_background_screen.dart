@@ -44,7 +44,7 @@ class _AdidasDynamicBackgroundScreenState extends State<AdidasDynamicBackgroundS
   }
 
   void _startProcessing() {
-    snapshotTimer = Timer.periodic(Duration(milliseconds: 300), (_) async {
+    snapshotTimer = Timer.periodic(Duration(milliseconds: 50), (_) async {
       if (videoElement == null || canvasElement == null || isProcessing) return;
 
       isProcessing = true;
@@ -108,40 +108,57 @@ class _AdidasDynamicBackgroundScreenState extends State<AdidasDynamicBackgroundS
     return Colors.black;
   }
 
-  @override
-  Widget build(BuildContext context) {
+ @override
+    Widget build(BuildContext context) {
     final backgroundColor = backgroundLocked ? fixedColor : _getBackgroundColor();
 
     return Scaffold(
-      backgroundColor: backgroundColor,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AnimatedScale(
-            scale: backgroundLocked ? 1.1 : 1.0,
-            duration: const Duration(milliseconds: 200),
+        backgroundColor: backgroundColor,
+        body: Stack(
+        children: [
+            Center(
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                AnimatedScale(
+                    scale: backgroundLocked ? 1.1 : 1.0,
+                    duration: const Duration(milliseconds: 200),
+                    child: GestureDetector(
+                    onTap: () {
+                        setState(() {
+                        backgroundLocked = !backgroundLocked;
+                        if (backgroundLocked) {
+                            fixedColor = _getBackgroundColor();
+                        }
+                        });
+                    },
+                    child: Image.asset(
+                        'assets/originals.png',
+                        height: 300,
+                        color: Colors.white,
+                    ),
+                    ),
+                ),
+                const SizedBox(height: 20),
+                ],
+            ),
+            ),
+            Positioned(
+            top: 20,
+            left: 20,
             child: GestureDetector(
-                onTap: () {
-                setState(() {
-                    backgroundLocked = !backgroundLocked;
-                    if (backgroundLocked) {
-                    fixedColor = _getBackgroundColor();
-                    }
-                });
-                },
-                child: Image.asset(
-                'assets/originals.png',
-                height: 300,
-                color: Colors.white,
+                onTap: () => Navigator.pushNamed(context, '/menu'),
+                child: Icon(
+                Icons.arrow_back_ios_new,
+                color: backgroundColor.withOpacity(0.4), // mimetizado
+                size: 28,
                 ),
             ),
             ),
-
-            const SizedBox(height: 20),
-          ],
+        ],
         ),
-      ),
     );
   }
 }
+
+

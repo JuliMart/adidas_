@@ -81,8 +81,8 @@ class _AdidasWelcomeScreenState extends State<AdidasWelcomeScreen> {
         }
       });
 
-      if (gesture == 'sign_continue') {
-        Navigator.pushNamed(context, '/menu');
+      if (gesture == 'sign_hello') {
+        Navigator.pushReplacementNamed(context, '/menu');
       }
     }
   }
