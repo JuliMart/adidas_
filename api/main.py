@@ -4,6 +4,10 @@ from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 import mediapipe as mp
+import time
+
+last_gesture_time = 0
+gesture_cooldown = 1.0  # segundos
 
 
 app = FastAPI()
@@ -24,7 +28,12 @@ age_net = cv2.dnn.readNetFromCaffe(prototxt, caffemodel)
 
 # MediaPipe manos
 mp_hands = mp.solutions.hands
-hands = mp_hands.Hands(static_image_mode=True, max_num_hands=1, min_detection_confidence=0.8)
+hands = mp_hands.Hands(
+    static_image_mode=False,       # seguimiento en tiempo real
+    max_num_hands=2,               # permite detectar ambas manos
+    min_detection_confidence=0.7,
+    min_tracking_confidence=0.5    # mejora el seguimiento
+)
 
 
 def map_age(age_label):
@@ -99,13 +108,22 @@ async def analyze_image(image: UploadFile = File(...)):
     color = get_dominant_color(roi)
 
     # Gestos
-    rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # usa frame entero
     result = hands.process(rgb)
     gesture = "waiting"
+
+    global last_gesture_time
+    now = time.time()
+
     if result.multi_hand_landmarks:
         for hand in result.multi_hand_landmarks:
             fingers = get_finger_states(hand.landmark)
-            gesture = recognize_sign(fingers)
+            detected = recognize_sign(fingers)
+
+            # Solo si ha pasado el tiempo de espera
+            if detected != "waiting" and now - last_gesture_time > gesture_cooldown:
+                gesture = detected
+                last_gesture_time = now
             break
 
     return {"age_range": age, "color": color, "gesture": gesture}

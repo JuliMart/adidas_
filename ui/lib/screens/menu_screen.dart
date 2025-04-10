@@ -7,11 +7,16 @@ class MenuScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(
+        appBar: AppBar(
         backgroundColor: Colors.transparent,
-        title: const Text('Menú Adidas', style: TextStyle(fontSize: 24)),
-        centerTitle: true,
-      ),
+        leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+            onPressed: () {
+            Navigator.pushNamed(context, '/');
+            },
+        ),
+        ),
+
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
