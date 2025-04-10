@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 import mediapipe as mp
 
+
 app = FastAPI()
 
 app.add_middleware(
@@ -23,7 +24,7 @@ age_net = cv2.dnn.readNetFromCaffe(prototxt, caffemodel)
 
 # MediaPipe manos
 mp_hands = mp.solutions.hands
-hands = mp_hands.Hands(static_image_mode=True, max_num_hands=1, min_detection_confidence=0.7)
+hands = mp_hands.Hands(static_image_mode=True, max_num_hands=1, min_detection_confidence=0.8)
 
 
 def map_age(age_label):
@@ -38,10 +39,22 @@ def detect_age(frame):
 
 
 def get_dominant_color(image):
-    img = image.reshape((-1, 3)).astype(np.float32)
-    _, labels, centers = cv2.kmeans(img, 1, None, (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0), 10, cv2.KMEANS_RANDOM_CENTERS)
-    r, g, b = map(int, centers[0])
+    img = cv2.resize(image, (100, 100))  # reduce tamaño para acelerar
+    img = img.reshape((-1, 3)).astype(np.float32)
+
+    k = 3
+    _, labels, centers = cv2.kmeans(
+        img, k, None,
+        (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0),
+        10, cv2.KMEANS_RANDOM_CENTERS
+    )
+
+    brightness = [np.mean(c) for c in centers]
+    best_idx = np.argmax(brightness)
+    r, g, b = map(int, centers[best_idx])
+
     return '#{:02x}{:02x}{:02x}'.format(b, g, r)
+
 
 
 def get_finger_states(landmarks):
@@ -59,8 +72,10 @@ def get_finger_states(landmarks):
 def recognize_sign(fingers):
     if fingers == [1, 1, 1, 1, 1]: return "sign_hello"
     if fingers == [0, 1, 0, 0, 1]: return "sign_help"
-    if fingers == [0, 0, 0, 0, 0]: return "sign_thanks"
+    if fingers == [0, 0, 0, 0, 0]: return "thumbs_down"
     if fingers == [0, 1, 1, 0, 0]: return "sign_continue"
+    if fingers == [1, 0, 0, 0, 0]: return "thumbs_up"
+
     return "waiting"
 
 
@@ -77,7 +92,10 @@ async def analyze_image(image: UploadFile = File(...)):
 
     # Color
     h, w, _ = frame.shape
-    roi = frame[h//3:h*2//3, w//3:w*2//3]  # centro
+
+    cx, cy = w // 2, h // 2
+    roi = frame[cy - 40:cy + 40, cx - 50:cx + 50]
+
     color = get_dominant_color(roi)
 
     # Gestos
