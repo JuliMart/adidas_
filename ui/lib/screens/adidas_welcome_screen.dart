@@ -136,7 +136,7 @@ class _AdidasWelcomeScreenState extends State<AdidasWelcomeScreen> {
                 onTap: _toggleColorLock,
                 child: ColorFiltered(
                   colorFilter: ColorFilter.mode(logoColor, BlendMode.srcIn),
-                  child: Image.asset('assets/originals.png', height: 300),
+                  child: Image.asset('assets/originals.png', height: 500),
                 ),
               ),
             ),

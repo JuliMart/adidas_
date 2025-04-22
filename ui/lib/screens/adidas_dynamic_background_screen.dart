@@ -134,7 +134,7 @@ class _AdidasDynamicBackgroundScreenState extends State<AdidasDynamicBackgroundS
                     },
                     child: Image.asset(
                         'assets/originals.png',
-                        height: 300,
+                        height: 500,
                         color: Colors.white,
                     ),
                     ),

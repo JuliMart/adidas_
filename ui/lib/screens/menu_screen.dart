@@ -22,22 +22,14 @@ class MenuScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 40),
-            const Text(
-              '¿Qué te gustaría hacer?',
-              style: TextStyle(
-                fontSize: 32,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-            ),
+            const SizedBox(height: 340),
+
             const SizedBox(height: 60),
-            _buildMenuButton(context, 'Hablar con Adidas', '/asistente'),
+            _buildMenuButton(context, '', '/asistente'),
             const SizedBox(height: 20),
-            _buildMenuButton(context, 'Modo experiencia', '/experiencia'),
+            _buildMenuButton(context, '', '/generar-campana-adidas'),
             const SizedBox(height: 20),
-            _buildMenuButton(context, 'Fondo dinámico por color', '/dynamic-bg'),
+            _buildMenuButton(context, 'FONDO DINÁMICO', '/dynamic-bg'),
           ],
         ),
       ),
