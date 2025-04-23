@@ -125,24 +125,43 @@ class _AdidasWelcomeScreenState extends State<AdidasWelcomeScreen> {
 
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AnimatedScale(
-              scale: colorLocked ? 1.1 : 1.0,
-              duration: const Duration(milliseconds: 200),
-              child: GestureDetector(
-                onTap: _toggleColorLock,
-                child: ColorFiltered(
-                  colorFilter: ColorFilter.mode(logoColor, BlendMode.srcIn),
-                  child: Image.asset('assets/originals.png', height: 500),
+      body: Stack(
+        children: [
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AnimatedScale(
+                  scale: colorLocked ? 1.1 : 1.0,
+                  duration: const Duration(milliseconds: 200),
+                  child: GestureDetector(
+                    onTap: _toggleColorLock,
+                    child: ColorFiltered(
+                      colorFilter: ColorFilter.mode(logoColor, BlendMode.srcIn),
+                      child: Image.asset('assets/originals.png', height: 500),
+                    ),
+                  ),
                 ),
-              ),
+                const SizedBox(height: 40),
+              ],
             ),
-            const SizedBox(height: 40),
-          ],
-        ),
+          ),
+
+          // ✅ Botón flotante en la esquina inferior derecha
+          Positioned(
+            bottom: 24,
+            right: 24,
+            child: FloatingActionButton(
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.black,
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, '/menu');
+              },
+              tooltip: 'Ir al menú',
+              child: const Icon(Icons.arrow_forward),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -3,6 +3,7 @@ import 'screens/adidas_welcome_screen.dart';
 import 'screens/menu_screen.dart';
 import 'screens/adidas_dynamic_background_screen.dart';
 import 'screens/adidas_campaign_generator_screen.dart';
+import 'screens/tryon_3d_screen.dart';
 
 
 void main() {
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => const AdidasWelcomeScreen(),
         '/menu': (context) => const MenuScreen(), 
         '/dynamic-bg': (context) => const AdidasDynamicBackgroundScreen(),
-        '/generar-campana-adidas': (context) => const AdidasCampaignGeneratorScreen(),
+        '/generar-campana-adidas': (context) => TryOn3DScreen(),
 
       },
     );
