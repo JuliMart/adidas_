@@ -133,7 +133,7 @@ class _AdidasDynamicBackgroundScreenState extends State<AdidasDynamicBackgroundS
                         });
                     },
                     child: Image.asset(
-                        'assets/originals.png',
+                        'assets/nike.png',
                         height: 500,
                         color: Colors.white,
                     ),
