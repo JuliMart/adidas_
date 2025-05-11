@@ -109,56 +109,70 @@ class _AdidasDynamicBackgroundScreenState extends State<AdidasDynamicBackgroundS
   }
 
  @override
-    Widget build(BuildContext context) {
-    final backgroundColor = backgroundLocked ? fixedColor : _getBackgroundColor();
+Widget build(BuildContext context) {
+  final backgroundColor = backgroundLocked ? fixedColor : _getBackgroundColor();
 
-    return Scaffold(
-        backgroundColor: backgroundColor,
-        body: Stack(
-        children: [
-            Center(
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                AnimatedScale(
-                    scale: backgroundLocked ? 1.1 : 1.0,
-                    duration: const Duration(milliseconds: 200),
-                    child: GestureDetector(
-                    onTap: () {
-                        setState(() {
-                        backgroundLocked = !backgroundLocked;
-                        if (backgroundLocked) {
-                            fixedColor = _getBackgroundColor();
-                        }
-                        });
-                    },
-                    child: Image.asset(
-                        'assets/nike.png',
-                        height: 500,
-                        color: Colors.white,
-                    ),
-                    ),
-                ),
-                const SizedBox(height: 20),
-                ],
+  return Scaffold(
+    backgroundColor: backgroundColor,
+    body: Stack(
+      children: [
+        // Textura translúcida encima del fondo dinámico
+        Positioned.fill(
+          child: IgnorePointer(
+            child: Opacity(
+              opacity: 0.9, // Ajustá este valor según el efecto deseado
+              child: Image.asset(
+                'assets/tex2res4.png', // Asegurate de que esta ruta y nombre coincidan
+                fit: BoxFit.cover,
+              ),
             ),
-            ),
-            Positioned(
-            top: 20,
-            left: 20,
-            child: GestureDetector(
-                onTap: () => Navigator.pushNamed(context, '/menu'),
-                child: Icon(
-                Icons.arrow_back_ios_new,
-                color: backgroundColor.withOpacity(0.4), // mimetizado
-                size: 28,
-                ),
-            ),
-            ),
-        ],
+          ),
         ),
-    );
-  }
+
+        // Contenido principal (logo)
+        Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AnimatedScale(
+                scale: backgroundLocked ? 1.1 : 1.0,
+                duration: const Duration(milliseconds: 200),
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      backgroundLocked = !backgroundLocked;
+                      if (backgroundLocked) {
+                        fixedColor = _getBackgroundColor();
+                      }
+                    });
+                  },
+                  child: Image.asset(
+                    'assets/nike.png',
+                    height: 500,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
+        ),
+
+        // Botón de volver
+        Positioned(
+          top: 20,
+          left: 20,
+          child: GestureDetector(
+            onTap: () => Navigator.pushNamed(context, '/menu'),
+            child: Icon(
+              Icons.arrow_back_ios_new,
+              color: backgroundColor.withOpacity(0.4), // mimetizado
+              size: 28,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
 }
-
-
+}
