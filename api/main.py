@@ -5,6 +5,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 import mediapipe as mp
 import time
+from generate_texture import TextureRequest, generate_texture_response
+
 
 last_gesture_time = 0
 gesture_cooldown = 1.0  # segundos
@@ -87,6 +89,9 @@ def recognize_sign(fingers):
 
     return "waiting"
 
+@app.post("/generate-texture/")
+def generate_texture(req: TextureRequest):
+    return generate_texture_response(req.color_name)
 
 @app.post("/analyze")
 async def analyze_image(image: UploadFile = File(...)):
