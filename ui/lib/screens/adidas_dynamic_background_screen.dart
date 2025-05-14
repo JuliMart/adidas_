@@ -65,7 +65,7 @@ class _AdidasDynamicBackgroundScreenState extends State<AdidasDynamicBackgroundS
   }
 
   Future<void> _sendToServer(Uint8List imageBytes) async {
-    final uri = Uri.parse('https://adidas-saaa.onrender.com/analyze');
+    final uri = Uri.parse('https://adidas-saaa.onrender.com/analyze?full_frame=true');
     final request = http.MultipartRequest('POST', uri)
       ..files.add(
         http.MultipartFile.fromBytes(
