@@ -33730,7 +33730,7 @@ Ne(){this.f=A.af8(A.da(0,50),new A.a1x(this))},
 m4(a){return this.TO(a)},
 TO(a){var s=0,r=A.O(t.H),q=this,p,o,n,m
 var $async$m4=A.K(function(b,c){if(b===1)return A.L(c,r)
-while(true)switch(s){case 0:n=A.adW("POST",A.iN("http://localhost:8000/analyze?full_frame=true"))
+while(true)switch(s){case 0:n=A.adW("POST",A.iN("https://adidas-saaa.onrender.com/analyze?full_frame=true"))
 n.y.push(A.adV("image",a,"frame.jpg"))
 s=2
 return A.S(n.lQ(0),$async$m4)
@@ -33835,7 +33835,7 @@ Ug(){this.f=A.af8(A.da(0,50),new A.a1D(this))},
 mu(a){return this.TP(a)},
 TP(a){var s=0,r=A.O(t.H),q=this,p,o,n,m,l,k
 var $async$mu=A.K(function(b,c){if(b===1)return A.L(c,r)
-while(true)switch(s){case 0:m=A.adW("POST",A.iN("http://localhost:8000/analyze"))
+while(true)switch(s){case 0:m=A.adW("POST",A.iN("https://adidas-saaa.onrender.com/analyze"))
 m.y.push(A.adV("image",a,"frame.jpg"))
 s=2
 return A.S(m.lQ(0),$async$mu)
