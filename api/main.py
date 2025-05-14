@@ -16,7 +16,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://flutter-adidas-web.onrender.com"],
+    allow_origins=["https://flutter-adidas-web.onrender.com", "https://adidas-saaa.onrender.com"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
