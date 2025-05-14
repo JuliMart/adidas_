@@ -60,7 +60,7 @@ class _AdidasWelcomeScreenState extends State<AdidasWelcomeScreen> {
   }
 
   Future<void> _sendToServer(Uint8List imageBytes) async {
-    final uri = Uri.parse('http://localhost:8000/analyze');
+    final uri = Uri.parse('https://adidas-saaa.onrender.com/analyze');
     final request = http.MultipartRequest('POST', uri)
       ..files.add(
         http.MultipartFile.fromBytes(
