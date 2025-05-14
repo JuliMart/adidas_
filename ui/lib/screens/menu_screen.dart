@@ -1,49 +1,20 @@
 import 'package:flutter/material.dart';
-import 'dart:ui' as ui;
-import 'dart:html' as html;
 
-class MenuScreen extends StatefulWidget {
+class MenuScreen extends StatelessWidget {
   const MenuScreen({super.key});
 
-  @override
-  State<MenuScreen> createState() => _MenuScreenState();
-}
-
-class _MenuScreenState extends State<MenuScreen> {
-  late html.VideoElement _videoElement;
-
-  @override
-  void initState() {
-    super.initState();
-
-    // Configurar video de fondo
-    _videoElement = html.VideoElement()
-      ..src = 'assets/jumpvi.mp4'
-      ..autoplay = true
-      ..loop = true
-      ..muted = true
-      ..style.width = '100%'
-      ..style.height = '100%'
-      ..style.objectFit = 'cover';
-
-    // Registrar el video como vista embebida
-    // ignore: undefined_prefixed_name
-    ui.platformViewRegistry.registerViewFactory(
-      'nikeVideoView',
-      (int viewId) => _videoElement,
-    );
-  }
-
-  Widget _buildMenuButton(BuildContext context, String label, String route) {
-    return SizedBox(
-      width: double.infinity,
-      child: FilledButton(
-        onPressed: () => Navigator.pushNamed(context, route),
-        style: FilledButton.styleFrom(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
-          padding: const EdgeInsets.symmetric(vertical: 20),
-          textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+  Widget _buildMenuButton(BuildContext context, String label, VoidCallback onTap) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      child: ElevatedButton(
+        onPressed: onTap,
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Colors.white,
+          backgroundColor: Colors.black,
+          elevation: 5,
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         child: Text(label),
       ),
@@ -53,43 +24,29 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          // Fondo de video sin animación
-          const Positioned.fill(
-            child: HtmlElementView(viewType: 'nikeVideoView'),
+      backgroundColor: const Color(0xFF111111), // Negro elegante
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        title: const Text('NIKE EXPERIENCE'),
+        centerTitle: true,
+        elevation: 0,
+        foregroundColor: Colors.white,
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildMenuButton(context, '⬅ Volver al inicio', () {
+                Navigator.pushNamed(context, '/');
+              }),
+              _buildMenuButton(context, '🌅 Fondo dinámico', () {
+                Navigator.pushNamed(context, '/dynamic-bg');
+              }),
+            ],
           ),
-
-          // Menú sobre el video
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 60),
-                  const Text(
-                    'NIKE EXPERIENCE',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.2,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 80),
-                  _buildMenuButton(context, 'ASISTENTE IA', '/asistente'),
-                  const SizedBox(height: 20),
-                  _buildMenuButton(context, 'GENERAR CAMPAÑA', '/generar-campana-adidas'),
-                  const SizedBox(height: 20),
-                  _buildMenuButton(context, 'FONDO DINÁMICO', '/dynamic-bg'),
-                ],
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
